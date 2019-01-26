@@ -1,0 +1,32 @@
+{
+  "name": "calculator",
+  "version": "1.0.0",
+  "description": "react.js calculator",
+  "main": "index.js",
+  "scripts": {
+    "start": "parcel src/index.html",
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "keywords": [
+    "calculator",
+    "react.js",
+    "ES6"
+  ],
+  "author": "Elena Lysenko",
+  "license": "ISC",
+  "devDependencies": {
+    "@babel/core": "^7.2.2",
+    "@babel/preset-react": "^7.0.0",
+    "babel-eslint": "^10.0.1",
+    "eslint": "^5.12.1",
+    "eslint-config-xo": "^0.26.0",
+    "eslint-config-xo-react": "^0.18.0",
+    "eslint-plugin-react": "^7.12.4",
+    "materialize-css": "^1.0.0-rc.2",
+    "parcel-bundler": "^1.11.0",
+    "prop-types": "^15.6.2",
+    "react": "^16.7.0",
+    "react-dom": "^16.7.0",
+    "sass": "^1.16.1"
+  }
+}

@@ -1,0 +1,25 @@
+extends:
+  - 'xo'
+  - 'xo-react'
+settings:
+  react:
+    version: '16.7'
+env:
+  browser: true
+  node: true
+parser: 'babel-eslint'
+rules:
+  indent:
+    - 'error'
+    - 4
+  camelcase:
+    - 2
+    - properties: 'never'
+  react/jsx-indent:
+    - 'error'
+    - 4
+  react/jsx-indent-props:
+    - 'error'
+    - 4
+  react/jsx-handler-names: 'off'
+  react/jsx-no-bind: 'off'
