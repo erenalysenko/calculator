@@ -27,6 +27,7 @@ install:
       - etc/
       - node_modules/
       - src/
+      - .babelrc
       - .dockerignore
       - Dockerfile
       - package.json
