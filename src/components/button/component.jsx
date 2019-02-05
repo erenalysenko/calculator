@@ -3,30 +3,72 @@ import './styles.scss';
 
 import PropTypes from 'prop-types';
 
+const ANIMATION_EASING = 'cubic-bezier(.17,.67,.9,1.42)';
+
 class Button extends Component {
-    constructor(props) {
-        super(props);
-
-        this._handleClick = this._handleClick.bind(this);
-    }
-
     render() {
         return (
-            <button
-                type="button"
-                className={`button ${this.props.className} waves-effect waves-purple white`}
-                disabled={this.props.disabled}
+            <div
+                className={`button ${this.props.className}`}
+                onMouseDown={this._handleMouseDown}
+                onTouchStart={this._handleMouseDown}
                 onClick={this._handleClick}
             >
                 {this.props.buttonKey}
-            </button>
+                {
+                    !this.props.disabled && (
+                        <div ref={this._ref} className="wave"/>
+                    )
+                }
+            </div>
         );
     }
 
-    _handleClick() {
-        console.log(this.props);
+    _handleMouseDown = () => {
+        if (this.props.disabled) {
+            return;
+        }
+
+        if (this._animation) {
+            this._animation.cancel();
+            this._animation = null;
+        }
+
+        this._animation = this._element
+            .animate([{
+                width: '0',
+                height: '0',
+                easing: ANIMATION_EASING,
+                offset: 0
+            }, {
+                width: '120%',
+                height: '120%',
+                easing: ANIMATION_EASING,
+                offset: 0.999
+            }, {
+                width: '0',
+                height: '0',
+                offset: 1
+            }], {
+                duration: 300
+            });
+
+        this._animation.onfinish = () => {
+            this._animation = null;
+        };
+    };
+
+    _handleClick = () => {
+        if (this.props.disabled) {
+            return;
+        }
+
         this.props.onClick(this.props.buttonKey);
-    }
+    };
+
+    _ref = el => {
+        this._element = el;
+    };
 }
 
 Button.propTypes = {

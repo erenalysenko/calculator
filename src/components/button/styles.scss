@@ -1,0 +1,84 @@
+@import "../../scss/common.scss";
+
+$btn-primary-font-size: 1.5rem;
+$btn-secondary-font-size: 1.2rem;
+$divider: 1px solid $hover-color;
+$del-btn-offset: ($btn-primary-extent - $btn-secondary-extent) / 2;
+
+@mixin button-primary-size {
+  width: $btn-primary-extent;
+  height: $btn-primary-extent;
+}
+
+@mixin button-secondary-size {
+  width: $btn-secondary-extent;
+  height: $btn-secondary-extent;
+}
+
+.button {
+  display: inline-flex;
+  justify-content: center;
+  align-items: center;
+  position: relative;
+  background: transparent;
+  color: $primary-color;
+  border: none;
+  cursor: pointer;
+  outline: none;
+  z-index: 1;
+  -webkit-tap-highlight-color: transparent;
+  user-select: none;
+  -moz-user-select: none;
+  -webkit-user-select: none;
+  -ms-user-select: none;
+
+  .wave {
+    width: 0;
+    height: 0;
+    position: absolute;
+    background-color: $hover-color;
+    border-radius: 50%;
+    left: 50%;
+    top: 50%;
+    transform: translate(-50%, -50%);
+    z-index: -1;
+  }
+
+  &.primary {
+    @include button-primary-size;
+    font-size: $btn-primary-font-size;
+  }
+
+  &.secondary {
+    @include button-secondary-size;
+    color: $accent-text-color;
+    font-weight: bold;
+    font-size: $btn-secondary-font-size;
+  }
+
+  &.right-panel {
+    @include button-primary-size;
+    border-left: $divider;
+    font-size: $btn-primary-font-size;
+  }
+
+  &.del {
+    @include button-secondary-size;
+    color: $accent-text-color;
+    font-size: $btn-secondary-font-size;
+    left: $del-btn-offset;
+
+
+    &::after {
+      @include button-primary-size;
+      content: "";
+      position: absolute;
+      left: 50%;
+      top: 50%;
+      transform: translate(-50%, -50%);
+      z-index: -2;
+      border-left: $divider;
+      box-sizing: border-box;
+    }
+  }
+}

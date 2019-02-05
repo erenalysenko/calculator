@@ -16,15 +16,15 @@ const BUTTONS = [
     ['(', 'openedParenthesis'],
     [')', 'closedParenthesis'],
     ['C', 'clear'],
-    ['⌫', 'delete'],
+    ['DEL', 'delete', 'del'],
     ['7', 'digit'],
     ['8', 'digit'],
     ['9', 'digit'],
-    ['×', 'operator'],
+    ['÷', 'operator'],
     ['4', 'digit'],
     ['5', 'digit'],
     ['6', 'digit'],
-    ['÷', 'operator'],
+    ['×', 'operator'],
     ['1', 'digit'],
     ['2', 'digit'],
     ['3', 'digit'],
@@ -38,31 +38,25 @@ const BUTTONS = [
 class App extends Component {
     constructor(props) {
         super(props);
-        this.handleDigit = this.handleDigit.bind(this);
-        this.handleOperator = this.handleOperator.bind(this);
-        this.handleResult = this.handleResult.bind(this);
-        this.clear = this.clear.bind(this);
-        this.restoreLastState = this.restoreLastState.bind(this);
-        this.handleParenthesis = this.handleParenthesis.bind(this);
-        this.handleDot = this.handleDot.bind(this);
-        this.handleKeyPress = this.handleKeyPress.bind(this);
         this.state = INITIAL_STATE;
         this.history = [];
     }
 
     componentDidMount() {
-        document.body.addEventListener('keypress', this.handleKeyPress);
+        document.body.addEventListener('keydown', this.handleKeyPress);
     }
 
     componentWillUnmount() {
-        document.body.removeEventListener('keypress', this.handleKeyPress);
+        document.body.removeEventListener('keydown', this.handleKeyPress);
     }
 
     render() {
         return (
             <main>
                 <div className="screen">
-                    <div className="input">{this.state.input}</div>
+                    <div className="input-wrapper">
+                        <div className="input">{this.state.input}</div>
+                    </div>
                     <div className="output">{this.state.output}</div>
                 </div>
                 <div className="buttons">
@@ -82,25 +76,25 @@ class App extends Component {
         );
     }
 
-    getButtonType(symbol) {
+    getButtonType = symbol => {
         switch (symbol) {
         case '^':
         case '(':
         case ')':
         case 'C':
             return 'secondary';
-        case '⌫':
+        case 'DEL':
         case '×':
         case '÷':
         case '-':
         case '+':
-            return 'right-panel';
+            return 'primary right-panel';
         default:
             return 'primary';
         }
-    }
+    };
 
-    getHandler(key) {
+    getHandler = key => {
         switch (key) {
         case 'digit':
             return this.handleDigit;
@@ -120,9 +114,9 @@ class App extends Component {
         default:
             console.error('Check BUTTONS array');
         }
-    }
+    };
 
-    handleOperator(operator) {
+    handleOperator = operator => {
         if ((operator !== '-') &&
             !['digit', 'closedParenthesis'].includes(this.state.lastSymbolType)) {
             return;
@@ -139,9 +133,9 @@ class App extends Component {
             shouldOverwrite: false,
             lastSymbolType: 'operator'
         });
-    }
+    };
 
-    handleDigit(digit) {
+    handleDigit = digit => {
         if (/\)$/.test(this.state.input)) {
             return;
         }
@@ -155,9 +149,9 @@ class App extends Component {
             shouldOverwrite: false,
             lastSymbolType: 'digit'
         });
-    }
+    };
 
-    handleParenthesis(parenthesis) {
+    handleParenthesis = parenthesis => {
         const isOpened = parenthesis === '(';
 
         if (isOpened && !['openedParenthesis', 'operator', null]
@@ -181,9 +175,9 @@ class App extends Component {
             lastSymbolType: isOpened ? 'openedParenthesis' : 'closedParenthesis',
             parenthesesBalance: this.state.parenthesesBalance + (isOpened ? 1 : -1)
         });
-    }
+    };
 
-    handleResult() {
+    handleResult = () => {
         if (this.state.parenthesesBalance !== 0 || !['closedParenthesis', 'digit']
             .includes(this.state.lastSymbolType)) {
             return;
@@ -197,9 +191,9 @@ class App extends Component {
             lastSymbolType: 'digit'
         });
         this.history = [];
-    }
+    };
 
-    handleDot() {
+    handleDot = () => {
         if (/([^\d]|\d+\.\d*)$/.test(this.state.input)) {
             return;
         }
@@ -214,57 +208,60 @@ class App extends Component {
             shouldOverwrite: false,
             lastSymbolType: 'dot'
         });
-    }
+    };
 
-    clear() {
+    clear = () => {
         this.history = [];
         this.setState(INITIAL_STATE);
-    }
+    };
 
     mySetState(state) {
         this.history.push({...this.state});
         this.setState(state);
     }
 
-    restoreLastState() {
+    restoreLastState = () => {
         const state = this.history.pop();
 
         if (state) {
             this.setState(state);
         }
-    }
+    };
 
-    handleKeyPress(e) {
-        switch (e.key) {
-        case '0':
-        case '1':
-        case '2':
-        case '3':
-        case '4':
-        case '5':
-        case '6':
-        case '7':
-        case '8':
-        case '9':
+    handleKeyPress = e => {
+        if (/^[0-9]$/.test(e.key)) {
             this.handleDigit(e.key);
-            break;
-        case '+':
-        case '-':
-        case '*':
-        case '/':
-            this.handleOperator(e.key.replace('/', '÷').replace('*', '×'));
-            break;
+        }
+
+        if (/^[+\-*/^]$/.test(e.key)) {
+            this.handleOperator(e.key
+                .replace('/', '÷')
+                .replace('*', '×'));
+        }
+
+        switch (e.key) {
         case 'Backspace':
-            this.restoreLastState('Del');
+            this.restoreLastState();
+            break;
+        case 'Delete':
+            this.clear();
             break;
         case 'Enter':
         case '=':
             this.handleResult();
             break;
+        case '(':
+        case ')':
+            this.handleParenthesis(e.key);
+            break;
+        case '.':
+        case ',':
+            this.handleDot('.');
+            break;
         default:
             break;
         }
-}
+    };
 }
 
 function calculateResult(input) {
